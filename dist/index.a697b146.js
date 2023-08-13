@@ -726,6 +726,8 @@ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _headline = require("../components/Headline");
 var _headlineDefault = parcelHelpers.interopDefault(_headline);
+var _movieList = require("../components/MovieList");
+var _movieListDefault = parcelHelpers.interopDefault(_movieList);
 var _search = require("../components/Search");
 var _searchDefault = parcelHelpers.interopDefault(_search);
 var _heropy = require("../core/heropy");
@@ -733,13 +735,14 @@ class Home extends (0, _heropy.Component) {
     render() {
         const headline = new (0, _headlineDefault.default)().el;
         const search = new (0, _searchDefault.default)().el;
+        const movieList = new (0, _movieListDefault.default)().el;
         this.el.classList.add("container");
-        this.el.append(headline, search);
+        this.el.append(headline, search, movieList);
     }
 }
 exports.default = Home;
 
-},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline":"8hMes","../components/Search":"bXMFE"}],"8hMes":[function(require,module,exports) {
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline":"8hMes","../components/Search":"bXMFE","../components/MovieList":"1YG5A"}],"8hMes":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
@@ -801,12 +804,47 @@ const store = new (0, _heropy.Store)({
 });
 exports.default = store;
 const searchMivoes = async (page)=>{
+    if (page === 1) {
+        //page 가 1이면 초기화
+        store.state.page = 1;
+        store.state.movies = [];
+    }
     //영화정보가져오기
     const res = await fetch(`https://www.omdbapi.com/?apikey=7035c60c&s=${store.state.searchText}&page=${page}`);
-    const json = await res.json();
-    console.log(json);
+    const { Search } = await res.json();
+    store.state.movies = [
+        ...store.state.movies,
+        ...Search
+    ];
 };
 
-},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1YG5A":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+var _movie = require("../store/movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
+class MovieList extends (0, _heropy.Component) {
+    constructor(){
+        super();
+        //상태감지
+        (0, _movieDefault.default).subscribe("movies", ()=>{
+            this.render();
+        });
+    }
+    render() {
+        this.el.classList.add("movie-list");
+        this.el.innerHTML = /* html */ `
+        <div class='movies'></div>
+        `;
+        const moviesEl = this.el.querySelector(".movies");
+        moviesEl.append((0, _movieDefault.default).state.movies.map((movie)=>{
+            return movie.Title;
+        }));
+    }
+}
+exports.default = MovieList;
+
+},{"../core/heropy":"7mIre","../store/movie":"7tKOW","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
 
 //# sourceMappingURL=index.a697b146.js.map
