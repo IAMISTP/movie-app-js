@@ -765,6 +765,8 @@ exports.default = Headline;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
+var _movie = require("../store/movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
 class Search extends (0, _heropy.Component) {
     render() {
         this.el.classList.add("search");
@@ -773,15 +775,37 @@ class Search extends (0, _heropy.Component) {
         <button class='btn btn-primary'>Search!</button>
         `;
         const inputEl = this.el.querySelector("input");
-        inputEl.addEventListener("input", ()=>{});
-        inputEl.addEventListener("keydown", (event)=>{
-            event.key;
+        inputEl.addEventListener("input", ()=>{
+            (0, _movieDefault.default).state.searchText = inputEl.value;
         });
-        const btnEl = document.querySelector("button");
-    // btnEl.addEventListener("click", () => {});
+        inputEl.addEventListener("keydown", (event)=>{
+            if (event.key === "Enter" && (0, _movieDefault.default).state.searchText.trim()) (0, _movie.searchMivoes)(1);
+        });
+        const btnEl = this.el.querySelector("button");
+        btnEl.addEventListener("click", ()=>{
+            if ((0, _movieDefault.default).state.searchText.trim()) (0, _movie.searchMivoes)(1);
+        });
     }
 }
 exports.default = Search;
+
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../store/movie":"7tKOW"}],"7tKOW":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "searchMivoes", ()=>searchMivoes);
+var _heropy = require("../core/heropy");
+const store = new (0, _heropy.Store)({
+    searchText: "",
+    page: 1,
+    movies: []
+});
+exports.default = store;
+const searchMivoes = async (page)=>{
+    //영화정보가져오기
+    const res = await fetch(`https://www.omdbapi.com/?apikey=7035c60c&s=${store.state.searchText}&page=${page}`);
+    const json = await res.json();
+    console.log(json);
+};
 
 },{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
 
