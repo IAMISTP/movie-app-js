@@ -724,13 +724,39 @@ exports.default = (0, _heropy.createRouter)([
 },{"../core/heropy":"7mIre","./Home":"228ep","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"228ep":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+var _headline = require("../components/Headline");
+var _headlineDefault = parcelHelpers.interopDefault(_headline);
 var _heropy = require("../core/heropy");
 class Home extends (0, _heropy.Component) {
     render() {
-        this.el.innerHTML = `<h1>gg</h1>`;
+        const headline = new (0, _headlineDefault.default)().el;
+        this.el.classList.add("container");
+        this.el.append(headline);
     }
 }
 exports.default = Home;
+
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","../components/Headline":"8hMes"}],"8hMes":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class Headline extends (0, _heropy.Component) {
+    render() {
+        this.el.classList.add("headline");
+        this.el.innerHTML = /* html */ `
+            <h1><span>OMDB API</span><br>
+                THE OPEN<br>
+                MOVIE DATABASE
+            </h1>
+            <p>
+            The OMDb API is a RESTful web service to obtain movie information, 
+            all content and images on the site are contributed and maintained by our users.<br>
+            If you find this service useful, please consider making a one-time donation or become a patron.
+            </p>
+        `;
+    }
+}
+exports.default = Headline;
 
 },{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
 
