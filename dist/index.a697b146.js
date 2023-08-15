@@ -824,6 +824,8 @@ parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
 var _movie = require("../store/movie");
 var _movieDefault = parcelHelpers.interopDefault(_movie);
+var _movieItem = require("./MovieItem");
+var _movieItemDefault = parcelHelpers.interopDefault(_movieItem);
 class MovieList extends (0, _heropy.Component) {
     constructor(){
         super();
@@ -838,13 +840,41 @@ class MovieList extends (0, _heropy.Component) {
         <div class='movies'></div>
         `;
         const moviesEl = this.el.querySelector(".movies");
-        moviesEl.append((0, _movieDefault.default).state.movies.map((movie)=>{
-            return movie.Title;
+        moviesEl.append(...(0, _movieDefault.default).state.movies.map((movie)=>{
+            return new (0, _movieItemDefault.default)({
+                movie
+            }).el;
         }));
     }
 }
 exports.default = MovieList;
 
-},{"../core/heropy":"7mIre","../store/movie":"7tKOW","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
+},{"../core/heropy":"7mIre","../store/movie":"7tKOW","./MovieItem":"SOq5K","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"SOq5K":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class MovieItem extends (0, _heropy.Component) {
+    constructor(props){
+        super({
+            props,
+            tagName: "a"
+        });
+    }
+    render() {
+        const { movie } = this.props;
+        this.el.setAttribute("href", `#/movie?id=${movie.imdbID}`);
+        this.el.classList.add("movie");
+        this.el.style.backgroundImage = `url(${movie.Poster})`;
+        this.el.innerHTML = /* html */ `
+      <div class='info'>
+        <div class='year'>${movie.Year}</div>
+        <div class='title'>${movie.Title}</div>
+       </div>
+    `;
+    }
+}
+exports.default = MovieItem;
+
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
 
 //# sourceMappingURL=index.a697b146.js.map
