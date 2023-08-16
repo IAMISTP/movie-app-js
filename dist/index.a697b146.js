@@ -804,21 +804,31 @@ const store = new (0, _heropy.Store)({
     searchText: "",
     page: 1,
     pageMax: 1,
-    movies: []
+    movies: [],
+    loading: false
 });
 exports.default = store;
 const searchMivoes = async (page)=>{
+    store.state.loading = true;
     store.state.page = page;
     if (page === 1) //page 가 1이면 초기화
     store.state.movies = [];
     //영화정보가져오기
-    const res = await fetch(`https://www.omdbapi.com/?apikey=7035c60c&s=${store.state.searchText}&page=${page}`);
-    const { Search, totalResults } = await res.json();
-    store.state.movies = [
-        ...store.state.movies,
-        ...Search
-    ];
-    store.state.pageMax = Math.ceil(Number(totalResults) / 10);
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=7035c60c&s=${store.state.searchText}&page=${page}`);
+        const { Search, totalResults, Response, Error } = await res.json();
+        if (Response === "True") {
+            store.state.movies = [
+                ...store.state.movies,
+                ...Search
+            ];
+            store.state.pageMax = Math.ceil(Number(totalResults) / 10);
+        } else store.state.message = Error;
+    } catch (error) {
+        console.log(error);
+    } finally{
+        store.state.loading = false;
+    }
 };
 
 },{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"1YG5A":[function(require,module,exports) {
@@ -836,11 +846,15 @@ class MovieList extends (0, _heropy.Component) {
         (0, _movieDefault.default).subscribe("movies", ()=>{
             this.render();
         });
+        (0, _movieDefault.default).subscribe("loading", ()=>{
+            this.render();
+        });
     }
     render() {
         this.el.classList.add("movie-list");
         this.el.innerHTML = /* html */ `
         <div class='movies'></div>
+        <div class="the-loader hide"></div>
         `;
         const moviesEl = this.el.querySelector(".movies");
         moviesEl.append(...(0, _movieDefault.default).state.movies.map((movie)=>{
@@ -848,6 +862,8 @@ class MovieList extends (0, _heropy.Component) {
                 movie
             }).el;
         }));
+        const loaderEl = this.el.querySelector(".the-loader");
+        (0, _movieDefault.default).state.loading ? loaderEl.classList.remove("hide") : loaderEl.classList.add("hide");
     }
 }
 exports.default = MovieList;
