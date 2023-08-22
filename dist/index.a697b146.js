@@ -586,16 +586,19 @@ root.append(new (0, _appDefault.default)().el);
 },{"./App":"dbYoF","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./routes":"9t1rf"}],"dbYoF":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+var _theHeader = require("./components/TheHeader");
+var _theHeaderDefault = parcelHelpers.interopDefault(_theHeader);
 var _heropy = require("./core/heropy");
 class App extends (0, _heropy.Component) {
     render() {
+        const theHeader = new (0, _theHeaderDefault.default)().el;
         const routerView = document.createElement("router-view");
-        this.el.append(routerView);
+        this.el.append(theHeader, routerView);
     }
 }
 exports.default = App;
 
-},{"./core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"7mIre":[function(require,module,exports) {
+},{"./core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./components/TheHeader":"eCist"}],"7mIre":[function(require,module,exports) {
 ///// Component /////
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
@@ -708,20 +711,74 @@ exports.export = function(dest, destName, get) {
     });
 };
 
-},{}],"9t1rf":[function(require,module,exports) {
+},{}],"eCist":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+class TheHeader extends (0, _heropy.Component) {
+    constructor(){
+        super({
+            tagName: "header",
+            state: {
+                menus: [
+                    {
+                        name: "Search",
+                        href: "#/"
+                    },
+                    {
+                        name: "Movie",
+                        href: "#/movie?id=tt4520988"
+                    },
+                    {
+                        name: "About",
+                        href: "#/About"
+                    }
+                ]
+            }
+        });
+    }
+    render() {
+        this.el.innerHTML = /* html */ `
+            <a href='#/' class='logo'>
+                <span>OMDBbAPI</span>.COM
+            </a>
+            <nav>
+                <ul>
+                    ${this.state.menus.map((menu)=>{
+            return /* html */ `
+                            <li><a href='${menu.href}'>${menu.name}</a></li>
+                        `;
+        }).join("")}
+                </ul>
+            </nav>
+            <a href="#/about" class="user">
+                <img src='https://heropy.blog/css/images/logo.png' alt="User"/>
+            </a>
+        `;
+    }
+}
+exports.default = TheHeader;
+
+},{"../core/heropy":"7mIre","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9t1rf":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _heropy = require("../core/heropy");
 var _home = require("./Home");
 var _homeDefault = parcelHelpers.interopDefault(_home);
+var _movie = require("./Movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
 exports.default = (0, _heropy.createRouter)([
     {
         path: "#/",
         component: (0, _homeDefault.default)
+    },
+    {
+        path: "#/movie",
+        component: (0, _movieDefault.default)
     }
 ]);
 
-},{"../core/heropy":"7mIre","./Home":"228ep","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"228ep":[function(require,module,exports) {
+},{"../core/heropy":"7mIre","./Home":"228ep","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","./Movie":"kWp0r"}],"228ep":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 var _headline = require("../components/Headline");
@@ -777,7 +834,7 @@ class Search extends (0, _heropy.Component) {
     render() {
         this.el.classList.add("search");
         this.el.innerHTML = /* html */ `
-        <input placeholder="Enter the movie title to search!" />
+        <input value="${(0, _movieDefault.default).state.searchText}" placeholder="Enter the movie title to search!" />
         <button class='btn btn-primary'>Search!</button>
         `;
         const inputEl = this.el.querySelector("input");
@@ -799,13 +856,16 @@ exports.default = Search;
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "searchMivoes", ()=>searchMivoes);
+parcelHelpers.export(exports, "getMovieDetails", ()=>getMovieDetails);
 var _heropy = require("../core/heropy");
 const store = new (0, _heropy.Store)({
     searchText: "",
     page: 1,
     pageMax: 1,
     movies: [],
-    loading: false
+    movie: {},
+    loading: false,
+    message: "Search for the movie title"
 });
 exports.default = store;
 const searchMivoes = async (page)=>{
@@ -828,6 +888,14 @@ const searchMivoes = async (page)=>{
         console.log(error);
     } finally{
         store.state.loading = false;
+    }
+};
+const getMovieDetails = async (id)=>{
+    try {
+        const res = await fetch(`https://www.omdbapi.com/?apikey=7035c60c&i=${id}&plot=full`);
+        store.state.movie = await res.json();
+    } catch (error) {
+        console.log("getMovieDetails error: ", error);
     }
 };
 
@@ -920,6 +988,71 @@ class MovieListMore extends (0, _heropy.Component) {
     }
 }
 exports.default = MovieListMore;
+
+},{"../core/heropy":"7mIre","../store/movie":"7tKOW","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"kWp0r":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+var _heropy = require("../core/heropy");
+var _movie = require("../store/movie");
+var _movieDefault = parcelHelpers.interopDefault(_movie);
+class Movie extends (0, _heropy.Component) {
+    async render() {
+        this.el.classList.add("container", "the-movie");
+        this.el.innerHTML = /*html */ `
+        <div class="poster skeleton"></div>
+        <div class="specs">
+            <div class='title skeleton'></div>
+            <div class='labels skeleton'></div>
+            <div class='plot skeleton'></div>
+        </div>
+    `;
+        await (0, _movie.getMovieDetails)(history.state.id);
+        console.log((0, _movieDefault.default).state.movie);
+        const { movie } = (0, _movieDefault.default).state;
+        const bigPoster = movie.Poster.replace("SX300", "SX700");
+        this.el.innerHTML = /* html */ `
+        <div style='background-image:url(${bigPoster})' class='poster'></div>
+        <div class='specs'>
+            <div class='title'
+            ${movie.Title}>
+        </div>
+        <div class='labels'>
+            <span>${movie.Released}</span>
+            &nbsp;/&nbsp;
+            <span>${movie.Runtime}</span>
+            &nbsp;/&nbsp;
+            <span>${movie.Country}</span>
+        </div>
+        <div class="plot">
+            ${movie.Plot}
+        </div>
+        <div>
+            <h3>Ratings</h3>
+            <p>${movie.Ratings.map((rating)=>{
+            return `<p>${rating.Source} - ${rating.Value}</p>`;
+        }).join("")}</p>
+        </div>
+        <div>
+            <h3>Actors</h3>
+            <p>${movie.Actors}</p>
+        </div>
+        <div>
+            <h3>Director</h3>
+            <p>${movie.Director}</p>
+        </div>
+        <div>
+            <h3>Production</h3>
+            <p>${movie.Production}</p>
+        </div>
+        <div>
+            </div>
+            <h3>Genre</h3>
+            <p>${movie.Genre}</p>
+        </div>
+    `;
+    }
+}
+exports.default = Movie;
 
 },{"../core/heropy":"7mIre","../store/movie":"7tKOW","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["1HTZj","kadq5"], "kadq5", "parcelRequire94c2")
 
